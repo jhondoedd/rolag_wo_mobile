@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.: R o l a g :.</title>
+<script src="js/jquery-1.11.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
+
+<link rel="stylesheet" type="text/css" href="css/styles/jqx.base.css" />
+<link rel="stylesheet" href="css/styles/jqx.ui-redmond.css" media="screen" title="ui-redmond" type="text/css" />
+
+<script src="js/jqwidgets/jqxcore.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxdata.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxgrid.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxgrid.pager.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxgrid.sort.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxgrid.selection.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxscrollbar.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jqwidgets/jqxbuttons.js" type="text/javascript" charset="utf-8"></script>
+
+<style>
+@media only screen and (min-device-width : 320px) and (max-device-width
+	: 480px) {
+	body {
+		background: #fff;
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 768px) {
+	body {
+		background: #fff;
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 1140px) {
+	body {
+		background: #FFF;
+		width: 100%;
+	}
+}
+
+body {
+	font-family: Arial;
+	font-weight: bold;
+	text-align: center;
+}
+
+.isi {
+	background: #FF0000;
+}
+
+.kosong {
+	background: #33CC00;
+}
+.ui-widget {
+    font-size:90% !important;
+}
+.btn{
+		font-size: 12px;
+		table-layout: fixed;
+		white-space: pre-wrap; /* css-3 */    
+	    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	    white-space: -pre-wrap; /* Opera 4-6 */    
+	    white-space: -o-pre-wrap; /* Opera 7 */    
+	    word-wrap: break-word; /* Internet Explorer 5.5+ */
+	}
+.totalCSS{
+	font-size: 14px;
+	font-family: Verdana;
+	font-weight: bold;
+}
+.jqx-input-content
+   {
+       font-size: 14px;
+	font-family: Verdana;
+	font-weight: bold;
+   }
+ .num {
+	font-weight: bold;
+   text-align: right;
+ }
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+	var theme = "ui-redmond";
+	var meja = getParameter("meja");
+	var url = 'http://192.168.1.4:880/wo/operation.php';
+	$.ajax({
+		cache:false,
+		type: "GET",
+		url: url,    
+		data: "jns=0&function=getMenu",
+		success: function (menu){
+			document.getElementById('panas').innerHTML = menu;
+		} 
+	});
+	$.ajax({
+		cache:false,
+		type: "GET",
+		url: url,    
+		data: "jns=1&function=getMenu",
+		success: function (menu){
+			document.getElementById('dingin').innerHTML = menu;
+		} 
+	});
+	$.ajax({
+		cache:false,
+		type: "GET",
+		url: url,    
+		data: "jns=2&function=getMenu",
+		success: function (menu){
+			document.getElementById('makanan').innerHTML = menu;
+		} 
+	});
+	$.ajax({
+		cache:false,
+		type: "GET",
+		url: url,    
+		data: "jns=3&function=getMenu",
+		success: function (menu){
+			document.getElementById('lain').innerHTML = menu;
+		} 
+	});
+	
+	document.getElementById('formTrans').innerHTML = "Penjualan Meja "+meja;
+	
+	$("#save").button();
+	$("#cancel").button();
+	$("#save").css({height:40, width:'100'});
+	$("#cancel").css({height:40, width:'150'});
+	$("#menuTab").tabs();
+	$("#subt").spinner({numberFormat: "n", disabled: true});
+	$("#ppn").spinner({numberFormat: "n", disabled: true});
+	$("#tot").spinner({numberFormat: "n", disabled: true});
+	$("#subt").css({width:'100'});
+	$("#ppn").css({width: '100'});
+	$("#tot").css({width: '100'});
+	
+	preGrid();
+	
+	setTimeout(function () { // wait until all resources loaded 
+		$(".btn").button();
+		$(".btn").css({height:40, width:'90%'});
+	}, 500);
+	
+	$(document).on('click', '.btn', function () {
+		var id = $(this).attr('id').replace('but','');
+		//alert(id + " -> " + $(this).data('hrg') + " -> " + $(this).data('name'));
+		var itemExist = 0;
+		var rows = $('#grid').jqxGrid('getrows');
+		var no = rows.length + 1;
+		var rowExist = 0;
+		for (var i = 0; i < rows.length; ++i)
+		{
+			var dataRecord = $("#grid").jqxGrid('getrowdata', i);
+			if (dataRecord.menu_id == id) {
+				itemExist = 1;
+				rowExist = i;
+			}
+		}
+
+		if (itemExist == 1) {
+			var value = $('#grid').jqxGrid('getcellvalue', rowExist, "menu_qty");
+			$("#grid").jqxGrid('setcellvalue', rowExist, "menu_qty", value + 1);
+		} else {
+			var rows = new Array();
+			var imagerenderer = function (row, datafield, value) {
+		        return '<div align=center><a title="Edit" href="#" onclick=delRow()><img border=0 style="margin-top: 2px; cursor: hand" height="20" width="20" height="20" width="20" src="images/del.png"/></a>';
+			};
+			var dataAdd = {};
+			
+			dataAdd["menu_id"] = id;
+			dataAdd["no"] = no;
+			dataAdd["menu_nama"] = $(this).data('name');
+			dataAdd["menu_hrg"] = $(this).data('hrg');
+			dataAdd["menu_qty"] = 1;
+			rows[0]=dataAdd;
+			$("#grid").jqxGrid('addrow', null, rows[0]);
+		}
+		calculate();
+	});
+	
+	$("#save").click(function () {
+		
+	});
+
+	$("#cancel").click(function () {
+		location.href = "index.html";
+	});
+	
+    
+
+
+});
+function delRow()
+{
+	var selectedrowindex = $("#grid").jqxGrid('getselectedrowindex');
+    var rowscount = $("#grid").jqxGrid('getdatainformation').rowscount;
+    var id = $("#grid").jqxGrid('getrowid', selectedrowindex);
+    $("#grid").jqxGrid('deleterow', id);
+    calculate();
+}
+
+function preGrid() {
+	var imagerenderer = function (row, datafield, value) {
+        return '<div align=center><a title="Edit" href="#" onclick=delRow()><img border=0 style="margin-top: 2px; cursor: hand" height="20" width="20" height="20" width="20" src="images/del.png"/></a>';
+	};
+	$("#grid").jqxGrid({
+	columns: [
+				{ text: 'ID', dataField: 'menu_id', hidden: true },
+				{ text: 'No', dataField: 'no', width: '20px' },
+				{ text: 'Menu', dataField: 'menu_nama' },
+				{ text: 'Harga', dataField: 'menu_hrg', width: '100px', filtertype: 'number', cellsformat: 'n3', align: "center", cellsalign: "right" },
+				{ text: 'Qty', dataField: 'menu_qty', width: '100px', filtertype: 'number', cellsformat: 'n3', align: "center", cellsalign: "right" },
+				{ text: 'Del', align: 'center', dataField: 'image', width: '80px', columntype: 'image',cellsrenderer: imagerenderer}
+			]
+	});
+	var url = "http://192.168.1.4:880/wo/operation.php";
+	var source =
+	{
+		datatype: "json",
+		datafields: [
+			{ name: 'menu_id' },
+			{ name: 'no' },
+			{ name: 'menu_nama' },
+			{ name: 'menu_hrg', type: 'int' },
+			{ name: 'menu_qty', type: 'int' }
+		],
+		id: 'jual_d_id',
+		url: url, 
+		root: 'data',
+		data: {
+			'function': 'initGridTrans'
+		}
+	};
+	var dataAdapter = new $.jqx.dataAdapter(source);
+	
+	$("#grid").jqxGrid(
+	{
+		width: '99.5%',
+		source: dataAdapter,
+		theme: "ui-redmond",
+		height: '200px',
+		sortable: true,
+		columnsresize: true,
+	});
+	$("#subt").val(0);
+	$("#ppn").val(0);
+	$("#tot").val(0);
+}
+
+function getParameter(param) {
+    var val = document.URL;
+    var url = val.substr(val.indexOf(param))  
+    var n=parseInt(url.replace(param+"=",""));
+    //alert(n+1);
+    return n+1;
+}
+
+function calculate()
+{
+	var totItem = 0
+	var rows = $('#grid').jqxGrid('getrows');
+	for (var i = 0; i < rows.length; ++i)
+	{
+		var dataRecord = $("#grid").jqxGrid('getrowdata', i);
+		totItem = totItem + (dataRecord.menu_hrg * dataRecord.menu_qty);
+	}
+	//n.toLocaleString('en-US', {minimumFractionDigits: 2}); // 10,000.00
+	$("#subt").val(totItem.toLocaleString('en-US'));
+	var ppn = totItem * 0.1;
+	$("#ppn").val(ppn.toLocaleString('en-US'));
+	var tot = totItem + (totItem * 0.1);
+	$("#tot").val(tot.toLocaleString('en-US'));
+}
+
+</script>
+<body>
+<div>
+<table align=center width='100%' style='border: none;border-spacing: 10px;'>
+	<tr>
+		<td colspan=2><div id=formTrans></div></td>
+	</tr>
+	<tr>
+		<td colspan=2>
+		    <div id=grid></div>
+		</td>
+	</tr>
+	<tr valign=top>
+		<td width='50%'>
+			<table width='100%' border=0 class="totalCSS">
+				<tr>
+					<td align=right>Subtotal&nbsp;&nbsp;</td>
+					<td width=150px><input id="subt" class="num"></td>
+				</tr>
+				<tr>
+					<td align=right>PPN&nbsp;&nbsp;</td>
+					<td><input id="ppn" class="num"></td>
+				</tr>
+				<tr>
+					<td align=right>Total&nbsp;&nbsp;</td>
+					<td><input id="tot" class="num"></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table width='100%' border=0 class="totalCSS">
+				<tr>
+					<td align=left><button id="save">Simpan</button></td>
+				</tr>
+				<tr>
+					<td align=left><button id="cancel">Batal</button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+			<div id='menuTab'>
+				<ul>
+					<li><a href="#panas">Panas</a></li>
+					<li><a href="#dingin">Dingin</a></li>
+					<li><a href="#makanan">Makanan</a></li>
+					<li><a href="#lain">Lain-Lain</a></li>
+				</ul>
+				<div id="panas"></div>
+				<div id="dingin"></div>
+				<div id="makanan"></div>
+				<div id="lain"></div>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</body>

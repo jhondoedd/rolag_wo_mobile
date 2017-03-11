@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.: R o l a g :.</title>
+<script src="js/jquery-1.11.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+<style>
+@media only screen and (min-device-width : 320px) and (max-device-width
+	: 480px) {
+	body {
+		background: #fff;
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 768px) {
+	body {
+		background: #fff;
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 1140px) {
+	body {
+		background: #FFF;
+		width: 100%;
+	}
+}
+
+body {
+	font-family: Arial;
+	font-weight: bold;
+	text-align: center;
+}
+
+.isi {
+	background: #FF0000;
+}
+
+.kosong {
+	background: #33CC00;
+}
+
+
+	.btn{
+		font-size: 12px;
+		table-layout: fixed;
+		white-space: pre-wrap; /* css-3 */    
+	    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	    white-space: -pre-wrap; /* Opera 4-6 */    
+	    white-space: -o-pre-wrap; /* Opera 7 */    
+	    word-wrap: break-word; /* Internet Explorer 5.5+ */
+	}
+	.totalCSS{
+		font-size: 14px;
+		font-family: Verdana;
+		font-weight: bold;
+	}
+	.jqx-input-content
+    {
+        font-size: 14px;
+		font-family: Verdana;
+		font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+var theme = "ui-redmond";
+$(document).ready(function () {
+	loadMeja();
+});
+
+function loadTrans(noMeja) {
+	location.href ="trans.html?meja="+noMeja;
+}
+
+function loadMeja(){
+	var url = 'http://192.168.1.4:880/wo/operation.php';
+	$.ajax({
+		cache:false,
+		type: "GET",
+		url: url,    
+		data: "function=getMeja",
+		success: function (html){
+			document.getElementById('meja').innerHTML = html;
+		} 
+	});
+}
+</script>
+<div id='meja'></div>
